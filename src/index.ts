@@ -49,7 +49,7 @@ export const createImageShortcode = ({
   ),
 }: ImageShortCodeOptions = {}) => async (
   src: string,
-  { alt, title, classes = [] }: ImageAttributes = {}
+  { alt = '', title = '', classes = [] }: ImageAttributes = {}
 ): Promise<string> => {
   const classNames: ReadonlyArray<string> = Array.isArray(classes)
     ? classes

@@ -1,6 +1,6 @@
 {
   "name": "eleventy-shortcode-image",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shortcode for image transformation, optimization and building its HTML representation.",
   "main": "index.js",
   "exports": {

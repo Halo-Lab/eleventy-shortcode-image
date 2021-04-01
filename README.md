@@ -40,7 +40,7 @@ Package exports factory-function `createImageShortcode` that returns shortcode f
 This function can accept optional options:
 
 ```ts
-export interface ImageShortCodeOptions {
+interface ImageShortCodeOptions {
   /**
    * Path to directory where all images live.
    *
@@ -79,7 +79,7 @@ const options = {
 This shortcode accepts two arguments:
 
 ```ts
-export interface ImageAttributes {
+interface ImageAttributes {
   /** Alternative text for <img>. */
   alt?: string;
   /** Title for <img>. */
