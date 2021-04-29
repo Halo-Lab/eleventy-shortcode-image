@@ -2,6 +2,7 @@ import path from 'path';
 
 // @ts-ignore
 import Image from '@11ty/eleventy-img';
+import { OptimizeOptions } from 'svgo';
 
 import { optimizeImage } from './image';
 import {
@@ -25,6 +26,17 @@ export interface ImageShortCodeOptions {
    * Should start from the _current working directory_.
    */
   outputDirectory?: string;
+  /**
+   * Options for [svgo](https://github.com/svg/svgo) package.
+   * for subtle configuration of SVGs optimizations.
+   */
+  svgoOptions?: OptimizeOptions;
+  /**
+   * Options for [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) package.
+   * Is is used for optiomizations of raster images.
+   * For more info see its documentation.
+   */
+  rasterOptions?: Record<string, any>;
 }
 
 export interface ImageAttributes {
@@ -47,6 +59,8 @@ export const createImageShortcode = ({
     DEFAULT_BUILD_DIRECTORY_NAME,
     DEFAULT_IMAGES_DIRECTORY_NAME
   ),
+  svgoOptions = {},
+  rasterOptions = {},
 }: ImageShortCodeOptions = {}) => async (
   src: string,
   { alt = '', title = '', classes = [] }: ImageAttributes = {}
@@ -66,6 +80,8 @@ export const createImageShortcode = ({
     input,
     output,
     classNames,
+    svgoOptions,
+    rasterOptions,
     outputDirectory,
     publicDirectory,
   });

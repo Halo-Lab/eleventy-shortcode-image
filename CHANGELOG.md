@@ -1,4 +1,11 @@
-# [1.0.1] - 2021-04-01
+# [1.1.0] - 2021-04-29
+
+### Added
+
+- `svgoOptions` option for configuration of behavior of [svgo](https://github.com/svg/svgo) package.
+- `rasterOptions` option for [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) package behavior optimization.
+
+## [1.0.1] - 2021-04-01
 
 ### Fixed
 

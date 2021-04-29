@@ -4,7 +4,8 @@ import { getImageFormatsFrom } from './image_formats';
 export const getRasterOptimizerOptions = (
   extension: string,
   outputDirectory: string,
-  publicDirectory: string
+  publicDirectory: string,
+  options: object = {}
 ) => ({
   widths: [null],
   formats: getImageFormatsFrom(extension),
@@ -26,4 +27,5 @@ export const getRasterOptimizerOptions = (
   sharpAvifOptions: {
     quality: 100,
   },
+  ...options,
 });

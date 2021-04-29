@@ -58,6 +58,17 @@ interface ImageShortCodeOptions {
    * By default it is `_site/images`.
    */
   outputDirectory?: string;
+  /**
+   * Options for [svgo](https://github.com/svg/svgo) package.
+   * for subtle configuration of SVGs optimizations.
+   */
+  svgoOptions?: OptimizeOptions;
+  /**
+   * Options for [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) package.
+   * Is is used for optiomizations of raster images.
+   * For more info see its documentation.
+   */
+  rasterOptions?: Record<string, any>;
 }
 ```
 
@@ -69,6 +80,12 @@ const options = {
   inputDirectory: 'src/images',
   // Do not add leading and trailing `/`
   outputDirectory: '_site/images',
+  svgoOptions: {
+    /* ... */
+  },
+  rasterOptions: {
+    /* ... */
+  },
 };
 ```
 
@@ -108,7 +125,7 @@ async function image(
 
   // your_template.11ty.js
   module.exports = async function () {
-    // Shortcode will think that path to image is 'src/images/some_image.png'
+    // Shortcode will assume that path to image is 'src/images/some_image.png'
     return `${this.image('some_image.png')}`;
   };
   ```
@@ -133,7 +150,9 @@ async function image(
 
   > For productivity if your _build_ directory will have SVG image, then it will be taken as source and inserted into HMTL. This is done in case if you have other SVG optimizing tool, that did all work.
 
-> Internally shortode uses [SVGO](https://github.com/svg/svgo) and [@11ty/eleventy-img](https://github.com/11ty/eleventy-img) packages. But at the current time there is no possibility to configure them 😔. Though in future we can fix that.
+Internally shortode uses [SVGO](https://github.com/svg/svgo) and [@11ty/eleventy-img](https://github.com/11ty/eleventy-img) packages. You can configure them through according options. See above about it ☝️ .
+
+> Note that shortcode has default options for these packages, but if you will add additional options, then some options may be overwritten. Default options for SVG optimizer is [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/vector_optimizer_options.ts) and for raster optimizer - [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/raster_optimizer_options.ts).
 
 ## Word from author
 

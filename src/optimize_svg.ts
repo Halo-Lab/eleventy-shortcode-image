@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { optimize } from 'svgo';
+import { optimize, OptimizeOptions } from 'svgo';
 
 import { SVG_CLASS_REGEXP } from './constants';
 import { getVectorOptimizerOptions } from './vector_optimizer_options';
@@ -12,7 +12,8 @@ import { getVectorOptimizerOptions } from './vector_optimizer_options';
 export const optimizeSVG = (
   input: string,
   output: string,
-  classNames: ReadonlyArray<string> = []
+  classNames: ReadonlyArray<string> = [],
+  options: OptimizeOptions = {}
 ) =>
   // For optimal work we need to check if we already did it
   // with _input_ SVG. If so - just return it.
@@ -30,7 +31,10 @@ export const optimizeSVG = (
     : fs.promises
         .readFile(input, { encoding: 'utf-8' })
         .then((source) =>
-          optimize(source, getVectorOptimizerOptions(input, classNames))
+          optimize(
+            source,
+            getVectorOptimizerOptions(input, classNames, options)
+          )
         )
         .then(async ({ data }) => {
           await fs.promises.writeFile(output, data, { encoding: 'utf-8' });

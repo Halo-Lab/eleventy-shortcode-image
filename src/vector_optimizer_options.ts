@@ -1,9 +1,10 @@
-import { extendDefaultPlugins } from 'svgo';
+import { extendDefaultPlugins, OptimizeOptions } from 'svgo';
 
 /** Build options for SVG optimizer. */
 export const getVectorOptimizerOptions = (
   input: string,
-  classNames: ReadonlyArray<string>
+  classNames: ReadonlyArray<string>,
+  options: OptimizeOptions = {}
 ) => ({
   path: input,
   plugins: extendDefaultPlugins([
@@ -33,4 +34,5 @@ export const getVectorOptimizerOptions = (
       active: true,
     },
   ]),
+  ...options,
 });

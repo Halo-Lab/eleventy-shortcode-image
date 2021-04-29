@@ -2,6 +2,7 @@ import path from 'path';
 
 // @ts-ignore
 import Image from '@11ty/eleventy-img';
+import { OptimizeOptions } from 'svgo';
 
 import { optimizeSVG } from './optimize_svg';
 import { makeDirectories } from './mkdir';
@@ -14,6 +15,8 @@ interface OptimizeImageOptions {
   output: string;
   /** Classes to be added to SVG. */
   classNames: ReadonlyArray<string>;
+  svgoOptions?: OptimizeOptions;
+  rasterOptions?: Record<string, any>;
   /** Path from current working directory to _images_ directory. */
   outputDirectory: string;
   /** Path from _output_ directory to _images_ directory. */
@@ -36,6 +39,8 @@ export const optimizeImage = ({
   input,
   output,
   classNames,
+  svgoOptions = {},
+  rasterOptions = {},
   outputDirectory,
   publicDirectory,
 }: OptimizeImageOptions): ImageMetadata => {
@@ -46,13 +51,16 @@ export const optimizeImage = ({
   const options = getRasterOptimizerOptions(
     extension,
     outputDirectory,
-    publicDirectory
+    publicDirectory,
+    rasterOptions
   );
 
   const optimizedImage = makeDirectories(path.dirname(output)).then(() =>
     // Though Image function can accept SVGs, but it does not optimize them.
     // So, we need to filter SVG and handle them separately.
-    isSVG ? optimizeSVG(input, output, classNames) : (Image(input, options), '')
+    isSVG
+      ? optimizeSVG(input, output, classNames, svgoOptions)
+      : (Image(input, options), '')
   );
 
   return {
