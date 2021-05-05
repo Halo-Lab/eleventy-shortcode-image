@@ -72,7 +72,9 @@ export const createImageShortcode = ({
   const input = path.resolve(inputDirectory, src);
   const output = path.resolve(outputDirectory, src);
 
-  const [_, ...directories] = outputDirectory.split(path.sep);
+  const [_, ...directories] = path
+    .dirname(path.join(outputDirectory, src))
+    .split(path.sep);
   const publicDirectory =
     directories.length > 0 ? path.join(...directories) : '';
 
