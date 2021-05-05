@@ -33,7 +33,7 @@ export interface ImageShortCodeOptions {
   svgoOptions?: OptimizeOptions;
   /**
    * Options for [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) package.
-   * Is is used for optiomizations of raster images.
+   * Is is used for optimizations of raster images.
    * For more info see its documentation.
    */
   rasterOptions?: Record<string, any>;
@@ -82,7 +82,6 @@ export const createImageShortcode = ({
     classNames,
     svgoOptions,
     rasterOptions,
-    outputDirectory,
     publicDirectory,
   });
 

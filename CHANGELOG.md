@@ -1,4 +1,11 @@
-# [1.1.0] - 2021-04-29
+# [1.1.1] - 2021-05-05
+
+### Changed
+
+- Shortcode writes images with the same relative paths as in source directory (save subdirectories).
+- Shortcode does not rename files now.
+
+## [1.1.0] - 2021-04-29
 
 ### Added
 

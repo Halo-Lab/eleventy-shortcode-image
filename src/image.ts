@@ -17,8 +17,6 @@ interface OptimizeImageOptions {
   classNames: ReadonlyArray<string>;
   svgoOptions?: OptimizeOptions;
   rasterOptions?: Record<string, any>;
-  /** Path from current working directory to _images_ directory. */
-  outputDirectory: string;
   /** Path from _output_ directory to _images_ directory. */
   publicDirectory: string;
 }
@@ -41,7 +39,6 @@ export const optimizeImage = ({
   classNames,
   svgoOptions = {},
   rasterOptions = {},
-  outputDirectory,
   publicDirectory,
 }: OptimizeImageOptions): ImageMetadata => {
   // Extension name without `.`.
@@ -50,7 +47,7 @@ export const optimizeImage = ({
 
   const options = getRasterOptimizerOptions(
     extension,
-    outputDirectory,
+    path.dirname(output),
     publicDirectory,
     rasterOptions
   );

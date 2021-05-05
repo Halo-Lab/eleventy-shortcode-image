@@ -1,3 +1,5 @@
+import { extname, basename } from 'path';
+
 import { getImageFormatsFrom } from './image_formats';
 
 /** Build options for raster image optimizer. */
@@ -27,5 +29,7 @@ export const getRasterOptimizerOptions = (
   sharpAvifOptions: {
     quality: 100,
   },
+  filenameFormat: (id: string, src: string, width: string, format: string) =>
+    `${basename(src, extname(src))}.${format}`,
   ...options,
 });
