@@ -11,5 +11,5 @@ export default {
     preserveModulesRoot: 'src',
   },
   plugins: [typescript(), terser()],
-  external: ['fs', 'path', 'svgo', '@11ty/eleventy-img'],
+  external: ['fs', 'path', 'debug', 'svgo', '@11ty/eleventy-img'],
 };

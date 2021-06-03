@@ -6,7 +6,7 @@ Optimize your raster and vector images 👨‍🎨
 
 ## Intention
 
-This world needs SVG! Optimal SVGs ☝️ And we bring it, while also do not forget about the loved raster images 🙂
+This world needs SVG! Optimal SVGs ☝️ And we bring it, while also do not forget about beloved raster images 🙂
 
 ## Get started
 
@@ -37,7 +37,7 @@ module.exports = (eleventyConfig) => {
 
 Package exports factory-function `createImageShortcode` that returns shortcode function.
 
-This function can accept optional options:
+This function accepts optional options:
 
 ```ts
 interface ImageShortCodeOptions {
@@ -126,7 +126,7 @@ async function image(
   // your_template.11ty.js
   module.exports = async function () {
     // Shortcode will assume that path to image is 'src/images/some_image.png'
-    return `${this.image('some_image.png')}`;
+    return `${await this.image('some_image.png')}`;
   };
   ```
 
@@ -143,12 +143,14 @@ async function image(
   };
   ```
 
+### Debug
+
+Package uses [debug](https://www.npmjs.com/package/debug) package to display some errors. They can be visible in `EleventyShortcodeImage` namespace. More detail on [debug's page](https://github.com/visionmedia/debug).
+
 ### What's special
 
 - This shortcode is configured to optimize images without its resizing. So all assets save its original _width/height_ size.
 - It optimizes and includes SVG into HTML and not _just copy it do build directory_. Also shortcode allows to pass your classes to SVG 😱 Yeah, we mean it 😏
-
-  > For productivity if your _build_ directory will have SVG image, then it will be taken as source and inserted into HMTL. This is done in case if you have other SVG optimizing tool, that did all work.
 
 Internally shortcode uses [SVGO](https://github.com/svg/svgo) and [@11ty/eleventy-img](https://github.com/11ty/eleventy-img) packages. You can configure them through according options. See above about it ☝️ .
 

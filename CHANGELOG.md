@@ -1,4 +1,19 @@
-# [1.1.1] - 2021-05-05
+# [1.2.0] - 2021-06-03
+
+### Added
+
+- Debug logger in `EleventyShortcodeImage` namespace.
+- Images that are downloaded from the Web will have names from `URL.pathname` property.
+
+### Removed
+
+- _output_ directory is not source of truth for SVGs anymore.
+
+### Fixed
+
+- Ability to process remote images.
+
+## [1.1.1] - 2021-05-05
 
 ### Changed
 

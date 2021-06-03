@@ -1,11 +1,16 @@
-import path from 'path';
+import { join, resolve } from 'path';
 
 // @ts-ignore
 import Image from '@11ty/eleventy-img';
 import { OptimizeOptions } from 'svgo';
 
-import { optimizeImage } from './image';
+import { log } from './logger';
+import { isUrl } from './is_url';
+import { optimizeSVG } from './optimize_svg';
+import { getPublicPath } from './public_path';
+import { getRasterOptimizerOptions } from './raster_optimizer_options';
 import {
+  SVG_NAME,
   DEFAULT_BUILD_DIRECTORY_NAME,
   DEFAULT_ASSETS_DIRECTORY_NAME,
   DEFAULT_IMAGES_DIRECTORY_NAME,
@@ -49,59 +54,62 @@ export interface ImageAttributes {
 }
 
 /** Creates `image` shortcode. */
-export const createImageShortcode = ({
-  inputDirectory = path.join(
-    DEFAULT_SOURCE_DIRECTORY_NAME,
-    DEFAULT_ASSETS_DIRECTORY_NAME,
-    DEFAULT_IMAGES_DIRECTORY_NAME
-  ),
-  outputDirectory = path.join(
-    DEFAULT_BUILD_DIRECTORY_NAME,
-    DEFAULT_IMAGES_DIRECTORY_NAME
-  ),
-  svgoOptions = {},
-  rasterOptions = {},
-}: ImageShortCodeOptions = {}) => async (
-  src: string,
-  { alt = '', title = '', classes = [] }: ImageAttributes = {}
-): Promise<string> => {
-  const classNames: ReadonlyArray<string> = Array.isArray(classes)
-    ? classes
-    : [classes];
+export const createImageShortcode =
+  ({
+    inputDirectory = join(
+      DEFAULT_SOURCE_DIRECTORY_NAME,
+      DEFAULT_ASSETS_DIRECTORY_NAME,
+      DEFAULT_IMAGES_DIRECTORY_NAME
+    ),
+    outputDirectory = join(
+      DEFAULT_BUILD_DIRECTORY_NAME,
+      DEFAULT_IMAGES_DIRECTORY_NAME
+    ),
+    svgoOptions = {},
+    rasterOptions = {},
+  }: ImageShortCodeOptions = {}) =>
+  async (
+    src: string,
+    { alt = '', title = '', classes = [] }: ImageAttributes = {}
+  ): Promise<string> => {
+    const classNames: ReadonlyArray<string> = Array.isArray(classes)
+      ? classes
+      : [classes];
 
-  const input = path.resolve(inputDirectory, src);
-  const output = path.resolve(outputDirectory, src);
+    const input = isUrl(src) ? src : resolve(inputDirectory, src);
 
-  const [_, ...directories] = path
-    .dirname(path.join(outputDirectory, src))
-    .split(path.sep);
-  const publicDirectory =
-    directories.length > 0 ? path.join(...directories) : '';
+    log(`Start optimizing "${input}" file.`);
 
-  const { metadata, data, isSVG } = optimizeImage({
-    input,
-    output,
-    classNames,
-    svgoOptions,
-    rasterOptions,
-    publicDirectory,
-  });
+    const stats = await Image(
+      input,
+      getRasterOptimizerOptions(
+        input,
+        getPublicPath(input, inputDirectory, outputDirectory),
+        rasterOptions
+      )
+    ).catch((error: Error) => log('Could not optimize image: %O', error));
 
-  return isSVG
-    ? data
-    : Image.generateHTML(
-        metadata,
-        {
-          alt,
-          title,
-          class: classNames.join(' '),
-          // Experimental technology: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
-          loading: 'lazy',
-          decoding: 'async',
-        },
-        {
-          // Strip the whitespace from the output of the `<picture>` element.
-          whitespaceMode: 'inline',
-        }
-      );
-};
+    log(`Image "${input}" is optimized. Stats:\n%O`, stats);
+
+    return SVG_NAME in stats
+      ? optimizeSVG(
+          resolve(stats[SVG_NAME][0].outputPath),
+          classNames,
+          svgoOptions
+        )
+      : Image.generateHTML(
+          stats,
+          {
+            alt,
+            title,
+            class: classNames.join(' '),
+            // Experimental technology: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
+            loading: 'lazy',
+            decoding: 'async',
+          },
+          {
+            // Strip the whitespace from the output of the `<picture>` element.
+            whitespaceMode: 'inline',
+          }
+        );
+  };

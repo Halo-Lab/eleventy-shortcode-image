@@ -1,18 +1,25 @@
-import { extname, basename } from 'path';
+import { sep, extname } from 'path';
 
+import { isUrl } from './is_url';
+import { URL_DELIMITER } from './constants';
+import { buildImageName } from './image_name';
 import { getImageFormatsFrom } from './image_formats';
 
 /** Build options for raster image optimizer. */
 export const getRasterOptimizerOptions = (
-  extension: string,
+  input: string,
   outputDirectory: string,
-  publicDirectory: string,
   options: object = {}
 ) => ({
   widths: [null],
-  formats: getImageFormatsFrom(extension),
+  svgShortCircuit: true,
+  formats:
+    // Before downloading image we don't know its type,
+    // so by default we will convert it into default formats.
+    getImageFormatsFrom(isUrl(input) ? '' : extname(input).slice(1)),
   outputDir: outputDirectory,
-  urlPath: publicDirectory,
+  urlPath:
+    URL_DELIMITER + outputDirectory.split(sep).slice(1).join(URL_DELIMITER),
   sharpPngOptions: {
     quality: 100,
     progressive: true,
@@ -29,7 +36,12 @@ export const getRasterOptimizerOptions = (
   sharpAvifOptions: {
     quality: 100,
   },
-  filenameFormat: (id: string, src: string, width: string, format: string) =>
-    `${basename(src, extname(src))}.${format}`,
+  filenameFormat: (
+    id: string,
+    src: string,
+    width: string,
+    format: string,
+    options: object
+  ) => buildImageName(input, src, format),
   ...options,
 });
