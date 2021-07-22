@@ -1,4 +1,18 @@
-# [1.2.0] - 2021-06-03
+# [1.3.0] - 2021-07-22
+
+### Added
+
+- Memoizing repeated images (in-memory).
+- Automatic image downloading.
+- Ability to generate HTML for GIF.
+- Ability to insert SVG into HTML or add it as link in \<img> element.
+
+### Changed
+
+- Handle up to 40 images in parallel.
+- By default, for most raster formats plugin generates `jpeg`, `webp` and `avif` images.
+
+## [1.2.0] - 2021-06-03
 
 ### Added
 

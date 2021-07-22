@@ -1,28 +1,28 @@
 import { promises } from 'fs';
 
-import { optimize, OptimizeOptions } from 'svgo';
+import { pipe, tryCatch } from '@fluss/core';
+import { optimize, OptimizedSvg, OptimizeOptions } from 'svgo';
 
 import { log } from './logger';
+import { AdditionalOptions } from './types';
 import { getVectorOptimizerOptions } from './vector_optimizer_options';
 
 export const optimizeSVG = (
   filePath: string,
   classNames: ReadonlyArray<string>,
-  svgoOptions: OptimizeOptions
-): Promise<string> =>
-  promises
-    .readFile(filePath, {
-      encoding: 'utf8',
-    })
-    .then((source) =>
-      optimize(
-        source,
-        getVectorOptimizerOptions(filePath, classNames, svgoOptions)
-      )
+  svgoOptions: OptimizeOptions & AdditionalOptions
+) =>
+  tryCatch(
+    pipe(
+      () => promises.readFile(filePath, { encoding: 'utf8' }),
+      (data: string) =>
+        optimize(
+          data,
+          getVectorOptimizerOptions(filePath, classNames, svgoOptions)
+        ),
+      ({ data }: OptimizedSvg) => data
+    ),
+    async (error: Error) => (
+      log(`SVG optimization is failed with error.\n%O`, error), ''
     )
-    .then(({ data }) => data)
-    .catch(
-      (error: Error) => (
-        log(`SVG optimization is failed with error.\n%O`, error), ''
-      )
-    );
+  );

@@ -1,14 +1,12 @@
-import { sep, extname } from 'path';
-
-import { isUrl } from './is_url';
-import { URL_DELIMITER } from './constants';
-import { buildImageName } from './image_name';
+import { Source } from './path_converter';
 import { getImageFormatsFrom } from './image_formats';
+
+const buildImageName = (source: Source, extension: string): string =>
+  source.name + `.${extension}`;
 
 /** Build options for raster image optimizer. */
 export const getRasterOptimizerOptions = (
-  input: string,
-  outputDirectory: string,
+  source: Source,
   options: object = {}
 ) => ({
   widths: [null],
@@ -16,10 +14,9 @@ export const getRasterOptimizerOptions = (
   formats:
     // Before downloading image we don't know its type,
     // so by default we will convert it into default formats.
-    getImageFormatsFrom(isUrl(input) ? '' : extname(input).slice(1)),
-  outputDir: outputDirectory,
-  urlPath:
-    URL_DELIMITER + outputDirectory.split(sep).slice(1).join(URL_DELIMITER),
+    getImageFormatsFrom(source.extension),
+  outputDir: source.relativeOutputDir,
+  urlPath: source.publicDir,
   sharpPngOptions: {
     quality: 100,
     progressive: true,
@@ -42,6 +39,6 @@ export const getRasterOptimizerOptions = (
     width: string,
     format: string,
     options: object
-  ) => buildImageName(input, src, format),
+  ) => buildImageName(source, format),
   ...options,
 });

@@ -13,10 +13,17 @@ export const getImageFormatsFrom = (
   switch (extension) {
     case 'png':
       return ['png', 'webp', 'avif'];
-    case 'svg':
-      // Do not convert vector image to raster image.
-      return ['svg'];
-    default:
+    case 'jpg':
+    case 'jpeg':
+    case 'webp':
+    case 'avif':
+    case 'tiff':
       return ['jpeg', 'webp', 'avif'];
+    default:
+      return [extension];
   }
 };
+
+export const isGif = (path: string): boolean => path.endsWith('gif');
+
+export const isSVG = (path: string): boolean => path.endsWith('svg');

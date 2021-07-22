@@ -62,7 +62,7 @@ interface ImageShortCodeOptions {
    * Options for [svgo](https://github.com/svg/svgo) package.
    * for subtle configuration of SVGs optimizations.
    */
-  svgoOptions?: OptimizeOptions;
+  svgoOptions?: OptimizeOptions & { toHTML?: boolean };
   /**
    * Options for [@11ty/eleventy-img](https://www.11ty.dev/docs/plugins/image/) package.
    * Is is used for optiomizations of raster images.
@@ -155,6 +155,8 @@ Package uses [debug](https://www.npmjs.com/package/debug) package to display som
 Internally shortcode uses [SVGO](https://github.com/svg/svgo) and [@11ty/eleventy-img](https://github.com/11ty/eleventy-img) packages. You can configure them through according options. See above about it ☝️ .
 
 > Note that shortcode has default options for these packages, but if you will add additional options, then some options may be overwritten. Default options for SVG optimizer is [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/vector_optimizer_options.ts) and for raster optimizer - [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/raster_optimizer_options.ts).
+
+By default, SVGs are not inserted into HTML directly, but through \<img> element. If you want to insert SVG into HTML provide `toHTML` property to `svgoOptions`.
 
 ## Word from author
 
