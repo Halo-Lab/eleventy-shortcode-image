@@ -1,4 +1,11 @@
-# [1.4.0] - 2021-07-23
+# [1.4.1] - 2021-07-23
+
+### Fixed
+
+- Caching all parameters of `image` shortcode to be able react on every parameter change.
+- source path is passed to `@11ty/eleventy-img` now.
+
+## [1.4.0] - 2021-07-23
 
 ### Added
 
