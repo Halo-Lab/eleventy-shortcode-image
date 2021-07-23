@@ -2,7 +2,7 @@
 
 ### Added
 
-- Add `toHTML` into `ImageProperties` for granular controlling output HTML for SVG.
+- Add `toHTML` into `ImageProperties` for granular controlling SVG output.
 
 ### Changed
 
