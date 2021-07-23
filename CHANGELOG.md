@@ -1,4 +1,14 @@
-# [1.3.0] - 2021-07-22
+# [1.4.0] - 2021-07-23
+
+### Added
+
+- Add `toHTML` into `ImageProperties` for granular controlling output HTML for SVG.
+
+### Changed
+
+- Rename `ImageAttributes` to `ImageProperties`.
+
+## [1.3.0] - 2021-07-22
 
 ### Added
 

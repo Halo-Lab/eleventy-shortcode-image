@@ -96,11 +96,13 @@ const options = {
 This shortcode accepts two arguments:
 
 ```ts
-interface ImageAttributes {
+interface ImageProperties {
   /** Alternative text for <img>. */
   alt?: string;
   /** Title for <img>. */
   title?: string;
+  /** Inserts SVG into HTML. **Only for SVG**. */
+  toHTML?: boolean;
   /** Class names for <img>. */
   classes?: string | ReadonlyArray<string>;
 }
@@ -108,7 +110,7 @@ interface ImageAttributes {
 // This is a signature of the actual shortcode.
 async function image(
   src: string,
-  attributes?: ImageAttributes
+  properties?: ImageProperties
 ): Promise<string>;
 ```
 
@@ -156,12 +158,12 @@ Internally shortcode uses [SVGO](https://github.com/svg/svgo) and [@11ty/elevent
 
 > Note that shortcode has default options for these packages, but if you will add additional options, then some options may be overwritten. Default options for SVG optimizer is [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/vector_optimizer_options.ts) and for raster optimizer - [here](https://github.com/Halo-Lab/eleventy-shortcode-image/blob/master/src/raster_optimizer_options.ts).
 
-By default, SVGs are not inserted into HTML directly, but through \<img> element. If you want to insert SVG into HTML provide `toHTML` property to `svgoOptions`.
+By default, SVGs are not inserted into HTML directly, but through \<img> element. If you want to insert SVG into HTML provide `toHTML` property to `svgoOptions`. This property tells that insertion will be done globally. You can override it by `toHTML` property of `ImageProperties` object.
 
 ## Word from author
 
 Have fun! ✌️
 
 <a href="https://www.halo-lab.com/?utm_source=github-brifinator-3000">
-    <img src="https://api.halo-lab.com/wp-content/uploads/dev_halo.svg" alt="Developed in Halo lab" height="60">
+  <img src="https://api.halo-lab.com/wp-content/uploads/dev_halo.svg" alt="Developed in Halo lab" height="60">
 </a>

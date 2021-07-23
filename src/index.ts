@@ -48,11 +48,13 @@ export interface ImageShortCodeOptions {
   readonly rasterOptions?: Record<string, any>;
 }
 
-export interface ImageAttributes {
+export interface ImageProperties {
   /** Alternative text for <img>. */
   alt?: string;
   /** Title for <img>. */
   title?: string;
+  /** Inserts SVG into HTML. **Only for SVG**. */
+  toHTML?: boolean;
   /** Class names for <img>. */
   classes?: string | ReadonlyArray<string>;
 }
@@ -74,7 +76,7 @@ export const createImageShortcode = ({
   memoize(
     async (
       src: string,
-      { alt = '', title = '', classes = [] }: ImageAttributes = {}
+      { alt = '', title = '', classes = [], toHTML }: ImageProperties = {}
     ): Promise<string> => {
       const classNames: ReadonlyArray<string> = Array.isArray(classes)
         ? classes
@@ -109,7 +111,7 @@ export const createImageShortcode = ({
           svgoOptions
         )();
 
-        if (svgoOptions.toHTML ?? false) {
+        if (toHTML ?? svgoOptions.toHTML ?? false) {
           return result;
         } else {
           // We do not need to wait for image writing, because
