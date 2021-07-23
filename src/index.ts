@@ -138,7 +138,7 @@ export const createImageShortcode = ({
 
       // Do not wait for image compression ends - may seed up start time.
       Image(
-        source.isURL ? source.sourceUrl : source.sourcePath,
+        source.sourcePath,
         getRasterOptimizerOptions(source, rasterOptions)
       ).catch((error: Error) => log('Could not optimize image: %O', error));
 
@@ -159,5 +159,6 @@ export const createImageShortcode = ({
           whitespaceMode: 'inline',
         }
       );
-    }
+    },
+    (src, properties = {}) => src + JSON.stringify(properties)
   );
