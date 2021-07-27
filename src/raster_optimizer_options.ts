@@ -7,7 +7,7 @@ const buildImageName = (source: Source, extension: string): string =>
 /** Build options for raster image optimizer. */
 export const getRasterOptimizerOptions = (
   source: Source,
-  options: object = {}
+  options: object = {},
 ) => ({
   widths: [null],
   svgShortCircuit: true,
@@ -18,27 +18,31 @@ export const getRasterOptimizerOptions = (
   outputDir: source.relativeOutputDir,
   urlPath: source.publicDir,
   sharpPngOptions: {
-    quality: 100,
+    // This value is recommended by Google developers.
+    // [here](https://web.dev/use-imagemin-to-compress-images/)
+    quality: 85,
     progressive: true,
   },
   sharpJpegOptions: {
-    quality: 100,
+    // This value is recommended by Google developers.
+    // [here](https://web.dev/use-imagemin-to-compress-images/)
+    quality: 85,
     progressive: true,
   },
   sharpWebpOptions: {
-    quality: 100,
+    quality: 85,
     // Use near_lossless compression mode.
     nearLossLess: true,
   },
   sharpAvifOptions: {
-    quality: 100,
+    quality: 85,
   },
   filenameFormat: (
     id: string,
     src: string,
     width: string,
     format: string,
-    options: object
+    options: object,
   ) => buildImageName(source, format),
   ...options,
 });

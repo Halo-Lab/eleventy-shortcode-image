@@ -28,7 +28,7 @@ module.exports = (eleventyConfig) => {
     'image',
     createImageShortcode({
       /* Options */
-    })
+    }),
   );
 };
 ```
@@ -97,20 +97,30 @@ This shortcode accepts two arguments:
 
 ```ts
 interface ImageProperties {
-  /** Alternative text for <img>. */
-  alt?: string;
-  /** Title for <img>. */
-  title?: string;
   /** Inserts SVG into HTML. **Only for SVG**. */
-  toHTML?: boolean;
+  readonly toHTML?: boolean;
   /** Class names for <img>. */
-  classes?: string | ReadonlyArray<string>;
+  readonly classes?: string | ReadonlyArray<string>;
+  /**
+   * Defines that image should be loaded lazily.
+   * Notifies plugin that _src_ and _srcset_ should not
+   * be set directly, but to other custom attributes.
+   */
+  readonly lazy?: boolean;
+  /** Class names for <img>. */
+  readonly classes?: string | ReadonlyArray<string>;
+  /** Name of the custom _src_ attribute for lazy loaded image. */
+  readonly srcName?: string;
+  /** Name of the custom _srcset_ attribute for lazy loaded image. */
+  readonly srcsetName?: string;
+
+  // And any other valid attribute.
 }
 
 // This is a signature of the actual shortcode.
 async function image(
   src: string,
-  properties?: ImageProperties
+  properties?: ImageProperties,
 ): Promise<string>;
 ```
 
@@ -122,7 +132,7 @@ async function image(
     'image',
     createImageShortcode({
       inputDirectory: 'src/images',
-    })
+    }),
   );
 
   // your_template.11ty.js
@@ -134,7 +144,7 @@ async function image(
 
 - `attributes` is a couple of attributes that can be added to image.
 
-  > Note that while `alt`, `title` and `classes` are applicable to raster images, for SVG is applicable only the latter.
+  > Note that for SVG that is inserted into HTML is applicable only `classes` property.
 
   ```js
   module.exports = async function () {
@@ -145,6 +155,10 @@ async function image(
   };
   ```
 
+`lazy` property signals that image should not be rendered instantly. When this property is `true` then plugin does not set `src` attribute for \<img> (or `srcset` for \<source> element). This behavior allows third-party plugins lazily load images when they are needed. By default, `lazy` equals to `false`.
+
+Also, you can customize names of custom `src` and `srcset` attributes. For that to be done, provide `srcName` and `srcsetName` properties of `ImageProperties`. By default, `srcName` equals to `data-src` and `srcsetName` - `data-srcset`.
+
 ### Debug
 
 Package uses [debug](https://www.npmjs.com/package/debug) package to display some errors. They can be visible in `EleventyShortcodeImage` namespace. More detail on [debug's page](https://github.com/visionmedia/debug).
@@ -153,6 +167,7 @@ Package uses [debug](https://www.npmjs.com/package/debug) package to display som
 
 - This shortcode is configured to optimize images without its resizing. So all assets save its original _width/height_ size.
 - It optimizes and includes SVG into HTML and not _just copy it do build directory_. Also shortcode allows to pass your classes to SVG 😱 Yeah, we mean it 😏
+- Allows third-party lazy load plugins integration. You will love it! ❤️
 
 Internally shortcode uses [SVGO](https://github.com/svg/svgo) and [@11ty/eleventy-img](https://github.com/11ty/eleventy-img) packages. You can configure them through according options. See above about it ☝️ .
 

@@ -2,17 +2,18 @@ import { join } from 'path';
 
 // @ts-ignore
 import Image from '@11ty/eleventy-img';
-import { memoize } from '@fluss/core';
 import { OptimizeOptions } from 'svgo';
+import { isNothing, memoize } from '@fluss/core';
 
 import { log } from './logger';
 import { converter } from './path_converter';
-import { createImg } from './create_img';
 import { fetchImage } from './fetch_image';
 import { writeImage } from './write_image';
 import { optimizeSVG } from './optimize_svg';
-import { AdditionalOptions } from './types';
 import { getRasterOptimizerOptions } from './raster_optimizer_options';
+import { AdditionalOptions, ImageProperties } from './types';
+import { createImg, createPicture, Metadata } from './create_img';
+import { getSrcsetName, normalizeImageAttributes } from './image_attributes';
 import {
   DEFAULT_BUILD_DIRECTORY_NAME,
   DEFAULT_ASSETS_DIRECTORY_NAME,
@@ -48,27 +49,16 @@ export interface ImageShortCodeOptions {
   readonly rasterOptions?: Record<string, any>;
 }
 
-export interface ImageProperties {
-  /** Alternative text for <img>. */
-  alt?: string;
-  /** Title for <img>. */
-  title?: string;
-  /** Inserts SVG into HTML. **Only for SVG**. */
-  toHTML?: boolean;
-  /** Class names for <img>. */
-  classes?: string | ReadonlyArray<string>;
-}
-
 /** Creates `image` shortcode. */
 export const createImageShortcode = ({
   inputDirectory = join(
     DEFAULT_SOURCE_DIRECTORY_NAME,
     DEFAULT_ASSETS_DIRECTORY_NAME,
-    DEFAULT_IMAGES_DIRECTORY_NAME
+    DEFAULT_IMAGES_DIRECTORY_NAME,
   ),
   outputDirectory = join(
     DEFAULT_BUILD_DIRECTORY_NAME,
-    DEFAULT_IMAGES_DIRECTORY_NAME
+    DEFAULT_IMAGES_DIRECTORY_NAME,
   ),
   svgoOptions = {},
   rasterOptions = {},
@@ -76,12 +66,8 @@ export const createImageShortcode = ({
   memoize(
     async (
       src: string,
-      { alt = '', title = '', classes = [], toHTML }: ImageProperties = {}
+      { toHTML, ...attributes }: ImageProperties = {},
     ): Promise<string> => {
-      const classNames: ReadonlyArray<string> = Array.isArray(classes)
-        ? classes
-        : [classes];
-
       // Gather information about an image.
       const source = converter(src, inputDirectory, outputDirectory);
 
@@ -94,21 +80,27 @@ export const createImageShortcode = ({
         // Don't wait for image writing.
         writeImage(source.sourcePath, source.outputPath)();
 
-        return createImg({
-          src: source.publicURL,
-          class: classNames.join(' '),
-          alt,
-          title,
-          loading: 'lazy',
-          decoding: 'async',
-        });
+        return createImg(
+          normalizeImageAttributes({
+            ...attributes,
+            src: source.publicURL,
+          }),
+        );
       }
 
       if (source.isSVG) {
+        const classNames: ReadonlyArray<string> = Array.isArray(
+          attributes.classes,
+        )
+          ? attributes.classes
+          : isNothing(attributes.classes)
+          ? []
+          : [attributes.classes];
+
         const result = await optimizeSVG(
           source.sourcePath,
           classNames,
-          svgoOptions
+          svgoOptions,
         )();
 
         if (toHTML ?? svgoOptions.toHTML ?? false) {
@@ -118,47 +110,38 @@ export const createImageShortcode = ({
           // we already have its public URL.
           writeImage(result, source.outputPath, true)();
 
-          return createImg({
-            src: source.publicURL,
-            class: classNames.join(' '),
-            alt,
-            title,
-            loading: 'lazy',
-            decoding: 'async',
-          });
+          return createImg(
+            normalizeImageAttributes({
+              ...attributes,
+              src: source.publicURL,
+            }),
+          );
         }
       }
 
       Image.concurrency = 40;
 
-      const stats = Image.statsSync(
+      const stats: Metadata = Image.statsSync(
         source.sourcePath,
-        getRasterOptimizerOptions(source, rasterOptions)
+        getRasterOptimizerOptions(source, rasterOptions),
       );
 
       // Do not wait for image compression ends - may seed up start time.
       Image(
         source.sourcePath,
-        getRasterOptimizerOptions(source, rasterOptions)
+        getRasterOptimizerOptions(source, rasterOptions),
       ).catch((error: Error) => log('Could not optimize image: %O', error));
 
       log(`Image "${source.rawInput}" is optimized. Stats:\n%O`, stats);
 
-      return Image.generateHTML(
+      return createPicture(
         stats,
-        {
-          alt,
-          title,
-          class: classNames.join(' '),
-          // Experimental technology: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
-          loading: 'lazy',
-          decoding: 'async',
-        },
-        {
-          // Strip the whitespace from the output of the `<picture>` element.
-          whitespaceMode: 'inline',
-        }
+        normalizeImageAttributes({
+          ...attributes,
+          src: source.publicURL,
+        }),
+        getSrcsetName(attributes.lazy, attributes.srcsetName),
       );
     },
-    (src, properties = {}) => src + JSON.stringify(properties)
+    (src, properties = {}) => src + JSON.stringify(properties),
   );

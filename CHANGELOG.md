@@ -1,4 +1,16 @@
-# [1.4.1] - 2021-07-23
+# [1.5.0] - 2021-07-27
+
+### Added
+
+- `lazy` property to `ImageProperties` for allowing third-party libraries lazy load images.
+- `srcName` and `srcsetName` properties to `ImageProperties` to be able to customize name of the _src_ and _srcset_ attributes respectively.
+- `ImageProperties` can have any valid attribute for \<img> element now.
+
+### Changed
+
+- Set default compression level to 85%.
+
+## [1.4.1] - 2021-07-23
 
 ### Fixed
 
