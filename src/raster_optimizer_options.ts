@@ -9,7 +9,7 @@ export const getRasterOptimizerOptions = (
   source: Source,
   options: object = {},
 ) => ({
-  widths: [null],
+  widths: [320, 640, 960, 1280, 1600],
   svgShortCircuit: true,
   formats:
     // Before downloading image we don't know its type,

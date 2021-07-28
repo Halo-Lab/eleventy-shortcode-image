@@ -76,18 +76,6 @@ export const createImageShortcode = ({
       // Download image if source is link.
       await fetchImage(source);
 
-      if (source.isGIF) {
-        // Don't wait for image writing.
-        writeImage(source.sourcePath, source.outputPath)();
-
-        return createImg(
-          normalizeImageAttributes({
-            ...attributes,
-            src: source.publicURL,
-          }),
-        );
-      }
-
       if (source.isSVG) {
         const classNames: ReadonlyArray<string> = Array.isArray(
           attributes.classes,

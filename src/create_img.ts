@@ -29,6 +29,17 @@ export interface Metadata {
   readonly [key: string]: ReadonlyArray<ImageMetadata>;
 }
 
+const getSizes = (
+  metadata: Metadata,
+): Pick<ImageMetadata, 'height' | 'width'> => {
+  const imageInfo = metadata[Object.keys(metadata)[0]];
+
+  return {
+    width: imageInfo[imageInfo.length - 1].width,
+    height: imageInfo[imageInfo.length - 1].height,
+  };
+};
+
 export const createPicture = (
   metadata: Metadata,
   attributes: Omit<ImageProperties, 'toHTML'>,
@@ -40,11 +51,14 @@ export const createPicture = (
       .map(
         (imageFormat) =>
           `<source type="${
-            imageFormat[0].sourceType
+            imageFormat[0].sourceType ?? ''
           }" ${srcsetName}="${imageFormat
             .map(({ srcset }) => srcset)
             .join(', ')}">`,
       )
       .join('\n')}
-      ${createImg(attributes)}
+      ${createImg({
+        ...getSizes(metadata),
+        ...attributes,
+      })}
     </picture>`;

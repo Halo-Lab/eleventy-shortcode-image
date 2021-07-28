@@ -1,6 +1,6 @@
 {
   "name": "eleventy-shortcode-image",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Shortcode for image transformation, optimization and building its HTML representation.",
   "main": "index.js",
   "exports": {
@@ -38,7 +38,7 @@
     "@types/svgo": "^2.3.0",
     "cpy-cli": "^3.1.1",
     "jest": "^27.0.3",
-    "prettier": "^2.2.1",
+    "prettier": "^2.3.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.45.2",
     "rollup-plugin-terser": "^7.0.2",
@@ -52,6 +52,6 @@
     "svgo": "^2.3.0"
   },
   "dependencies": {
-    "@fluss/core": "^0.28.0"
+    "@fluss/core": "^0.29.1"
   }
 }

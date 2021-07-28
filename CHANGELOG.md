@@ -1,4 +1,11 @@
-# [1.5.0] - 2021-07-27
+# [1.5.1] - 2021-07-28
+
+### Fixed
+
+- Add `width` and `height` attributes to \<img>, by default.
+- By default, shortcode will generate `srcset` for _320_, _640_, _960_, _1280_ and _1600_ pixels.
+
+## [1.5.0] - 2021-07-27
 
 ### Added
 
