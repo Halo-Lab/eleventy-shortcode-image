@@ -1,4 +1,13 @@
-# [1.5.1] - 2021-07-28
+# [1.5.2] - 2021-07-29
+
+### Fixed
+
+- Renaming images caused rewriting different variants with the last and most heavy one.
+- Remove waiting SVG optimization step.
+- Don't render \<source> element if image metadata doesn't emit it.
+- Change source of public URL for \<img> element in \<picture>.
+
+## [1.5.1] - 2021-07-28
 
 ### Fixed
 

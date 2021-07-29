@@ -1,4 +1,4 @@
-import { isJust } from '@fluss/core';
+import { isJust, list, NArray } from '@fluss/core';
 
 import { ImageProperties } from './types';
 
@@ -29,36 +29,43 @@ export interface Metadata {
   readonly [key: string]: ReadonlyArray<ImageMetadata>;
 }
 
-const getSizes = (
-  metadata: Metadata,
-): Pick<ImageMetadata, 'height' | 'width'> => {
-  const imageInfo = metadata[Object.keys(metadata)[0]];
+const last = <T extends ReadonlyArray<any>>(array: T): NArray.Last<T> =>
+  array[array.length - 1];
 
-  return {
-    width: imageInfo[imageInfo.length - 1].width,
-    height: imageInfo[imageInfo.length - 1].height,
-  };
-};
+const getImageMetadataOf = (
+  metadata: Metadata,
+  index: number,
+): ReadonlyArray<ImageMetadata> => metadata[Object.keys(metadata)[index]];
 
 export const createPicture = (
   metadata: Metadata,
   attributes: Omit<ImageProperties, 'toHTML'>,
   srcsetName: string,
-): string =>
-  `<picture>
-    ${Object.values(metadata)
-      .reverse()
-      .map(
-        (imageFormat) =>
-          `<source type="${
-            imageFormat[0].sourceType ?? ''
-          }" ${srcsetName}="${imageFormat
-            .map(({ srcset }) => srcset)
-            .join(', ')}">`,
-      )
-      .join('\n')}
+): string => {
+  // Image of the lowest quality and older format always goes first.
+  const lowsrc = last(getImageMetadataOf(metadata, 0));
+
+  return `<picture>
+    ${
+      list(Object.values(metadata)).chain(list).isEmpty()
+        ? ''
+        : Object.values(metadata)
+            .reverse()
+            .map(
+              (imageFormat) =>
+                `<source type="${
+                  imageFormat[0].sourceType ?? ''
+                }" ${srcsetName}="${imageFormat
+                  .map(({ srcset }) => srcset)
+                  .join(', ')}">`,
+            )
+            .join('\n')
+    }
       ${createImg({
-        ...getSizes(metadata),
+        src: lowsrc.url,
+        width: lowsrc.width,
+        height: lowsrc.height,
         ...attributes,
       })}
     </picture>`;
+};

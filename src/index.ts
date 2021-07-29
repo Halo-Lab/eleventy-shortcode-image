@@ -85,7 +85,7 @@ export const createImageShortcode = ({
           ? []
           : [attributes.classes];
 
-        const result = await optimizeSVG(
+        const result = optimizeSVG(
           source.sourcePath,
           classNames,
           svgoOptions,
@@ -96,7 +96,9 @@ export const createImageShortcode = ({
         } else {
           // We do not need to wait for image writing, because
           // we already have its public URL.
-          writeImage(result, source.outputPath, true)();
+          result.then((svgData) =>
+            writeImage(svgData, source.outputPath, true)(),
+          );
 
           return createImg(
             normalizeImageAttributes({
@@ -124,10 +126,7 @@ export const createImageShortcode = ({
 
       return createPicture(
         stats,
-        normalizeImageAttributes({
-          ...attributes,
-          src: source.publicURL,
-        }),
+        normalizeImageAttributes(attributes),
         getSrcsetName(attributes.lazy, attributes.srcsetName),
       );
     },

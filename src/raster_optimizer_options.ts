@@ -1,9 +1,6 @@
 import { Source } from './path_converter';
 import { getImageFormatsFrom } from './image_formats';
 
-const buildImageName = (source: Source, extension: string): string =>
-  source.name + `.${extension}`;
-
 /** Build options for raster image optimizer. */
 export const getRasterOptimizerOptions = (
   source: Source,
@@ -43,6 +40,6 @@ export const getRasterOptimizerOptions = (
     width: string,
     format: string,
     options: object,
-  ) => buildImageName(source, format),
+  ) => `${source.name}-${id}-${width}.${format}`,
   ...options,
 });
