@@ -40,6 +40,7 @@ const getImageMetadataOf = (
 export const createPicture = (
   metadata: Metadata,
   attributes: Omit<ImageProperties, 'toHTML'>,
+  srcName: string,
   srcsetName: string,
 ): string => {
   // Image of the lowest quality and older format always goes first.
@@ -62,7 +63,8 @@ export const createPicture = (
             .join('\n')
     }
       ${createImg({
-        src: lowsrc.url,
+        [srcName]: lowsrc.url,
+        [srcsetName]: lowsrc.srcset,
         width: lowsrc.width,
         height: lowsrc.height,
         ...attributes,

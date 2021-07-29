@@ -10,7 +10,7 @@ export const normalizeImageAttributes = ({
   lazy,
   srcset,
   classes,
-  srcName = 'data-src',
+  srcName,
   srcsetName,
   ...attributes
 }: Record<
@@ -26,7 +26,7 @@ export const normalizeImageAttributes = ({
   return {
     ...defaultAttributes,
     ...attributes,
-    [lazy ? (srcName as string) : 'src']: src,
+    [getSrcName(lazy as boolean, srcName as string)]: src,
     [getSrcsetName(lazy as boolean, srcsetName as string)]: srcset,
     class: classNames.join(' '),
   };
@@ -34,3 +34,6 @@ export const normalizeImageAttributes = ({
 
 export const getSrcsetName = (lazy: boolean = false, srcsetName?: string) =>
   lazy ? srcsetName ?? 'data-srcset' : 'srcset';
+
+export const getSrcName = (lazy: boolean = false, srcName?: string) =>
+  lazy ? srcName ?? 'data-src' : 'src';

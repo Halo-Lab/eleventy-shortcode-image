@@ -1,4 +1,14 @@
-# [1.5.2] - 2021-07-29
+# [1.5.3] - 2021-07-29
+
+### Added
+
+- `srcset` attribute to \<img> element in \<picture>.
+
+### Fixed
+
+- Defining `src` attribute on \<img> element with `lazy: true`.
+
+## [1.5.2] - 2021-07-29
 
 ### Fixed
 

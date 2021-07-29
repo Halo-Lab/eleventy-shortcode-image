@@ -13,7 +13,11 @@ import { optimizeSVG } from './optimize_svg';
 import { getRasterOptimizerOptions } from './raster_optimizer_options';
 import { AdditionalOptions, ImageProperties } from './types';
 import { createImg, createPicture, Metadata } from './create_img';
-import { getSrcsetName, normalizeImageAttributes } from './image_attributes';
+import {
+  getSrcName,
+  getSrcsetName,
+  normalizeImageAttributes,
+} from './image_attributes';
 import {
   DEFAULT_BUILD_DIRECTORY_NAME,
   DEFAULT_ASSETS_DIRECTORY_NAME,
@@ -127,6 +131,7 @@ export const createImageShortcode = ({
       return createPicture(
         stats,
         normalizeImageAttributes(attributes),
+        getSrcName(attributes.lazy, attributes.srcName),
         getSrcsetName(attributes.lazy, attributes.srcsetName),
       );
     },
